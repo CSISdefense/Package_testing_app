@@ -14,7 +14,7 @@ library(lazyeval)
 source("C:\\Users\\LLipsey\\Documents\\GitHub\\hamre\\R\\plot_functions.R")
 
 ui <- fluidPage(
-  
+
   sidebarLayout(
     sidebarPanel(
       selectInput(
@@ -28,10 +28,10 @@ ui <- fluidPage(
         choices = c("None", "Vendor.Size", "Simple"),
         selected = "None")
     ),
-    
+
     mainPanel(
       plotOutput(
-        "fpds_plot", 
+        "fpds_plot",
         hover = hoverOpts(id = "plot_hover", delay = 80)),
       uiOutput("hover_info")
     )
@@ -40,11 +40,11 @@ ui <- fluidPage(
 
 
 server <- function(input, output) {
-  
-  load("FPDS.Rda")  
-  
+
+  load("FPDS.Rda")
+
   output$fpds_plot <- renderPlot({
-    
+
     if(input$breakout == "None"){
       plot <- ggplot(
         data = dataset(),
@@ -59,35 +59,36 @@ server <- function(input, output) {
           fill = input$breakout)) +
         geom_bar(stat = "identity")
     }
-    
+
     if(input$facet != "None") plot <- plot + facet_wrap(input$facet)
-    
+
     plot <- plot + scale_y_continuous(labels = money_label)
-    
+    plot %<>% add_diigtheme()
+
     return(plot)
   })
-  
+
   dataset <- reactive({
     choices <- c(input$breakout, input$facet, "Fiscal.Year")
     choices <- choices[choices != "None"]
     return(FPDS %>% sum_to(choices))
   })
-  
-  
-  
+
+
+
   output$hover_info <- renderUI({
-    
+
     hover_tip(
       input$plot_hover,
       hover_data(
         chart_data = dataset(),
         hover_object = input$plot_hover,
         chart_type = "bar"))
-    
+
   })
-  
+
 }
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
 
