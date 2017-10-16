@@ -4,7 +4,13 @@ library(shiny)
 library(tidyverse)
 library(magrittr)
 library(lazyeval)
-library(csis360)
+
+# should work with csis360 once it is updated and compiled locally
+#library(csis360)
+
+# until then just read the functions from local script directly - remove and
+# replace this with library(csis360) later.
+source("shiny_functions.R")
 
 ui <- fluidPage(
 
